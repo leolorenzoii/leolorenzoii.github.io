@@ -6,9 +6,32 @@
 </description>
     <link>https://leolorenzoii.github.io</link>
     <atom:link href="https://leolorenzoii.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 01 Feb 2021 23:23:34 +0800</pubDate>
-    <lastBuildDate>Mon, 01 Feb 2021 23:23:34 +0800</lastBuildDate>
+    <pubDate>Mon, 01 Feb 2021 23:50:11 +0800</pubDate>
+    <lastBuildDate>Mon, 01 Feb 2021 23:50:11 +0800</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>Template Matching</title>
+        <description>&lt;p&gt;When we’re searching for something, be it an object, a person, or something else. It pays to have a template in our mind that would determine the characteristics of what we are searching for.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Hello, hello! Friends, classmates, and my idols in life!&lt;/strong&gt; In today’s blog post we look how we can use template matching to find and essentially count objects that look similar to a given template.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-template-matching&quot;&gt;What is template matching?&lt;/h2&gt;
+
+&lt;p&gt;In digital image processing, template matching is finding small parts of an image that will match a given template image. It has various applications in fields such as quality control, or navigating machine robots, and a way to detect edges in an images.&lt;/p&gt;
+
+&lt;p&gt;In this blog, we will demonstrate this by using an image of aircraft carrier, then detect the aircrafts that can be found from this image.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 18 Jan 2021 00:00:00 +0800</pubDate>
+        <link>https://leolorenzoii.github.io/2021/01/18/template-matching/</link>
+        <guid isPermaLink="true">https://leolorenzoii.github.io/2021/01/18/template-matching/</guid>
+        
+        <category>skimage</category>
+        
+        <category>template matching</category>
+        
+        
+      </item>
     
       <item>
         <title>Image Processing annd Machine Learning</title>
