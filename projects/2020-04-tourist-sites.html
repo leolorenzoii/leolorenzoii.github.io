@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Optimal Itinerary using Network Science</title>
+    <meta name="viewport" content="width=device-width">
+    <!-- <meta name="description" content=""> -->
+    <!-- <link rel="canonical" href="http://localhost:4000/projects/2020-04-tourist-sites.html"> -->
+
+
+    <!-- Custom CSS & Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
+    <!-- <link rel="stylesheet" href="/style.css"> -->
+
+    <!-- Custom Fonts -->
+    <!-- <link rel="stylesheet" href="/css/font-awesome/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/default.min.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+
+    <body data-barba="wrapper">
+        <!-- Navigation -->
+<nav class="navbar fixed-top navbar-expand-lg navbar-light">
+  <div class="container-fluid px-4">
+    <a href="http://localhost:4000#"><div class="logo me-3"></div></a>
+    <a class="navbar-brand" href="http://localhost:4000#">leolorenzoii</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav d-flex ms-auto" id="navbar-spy">
+        <a class="nav-link text-end" href="#">Home</a>
+        <a class="nav-link text-end" href="http://localhost:4000#projects">Projects</a>
+        <a class="nav-link text-end" href="http://localhost:4000#blogs">Blog</a>
+        <a class="nav-link text-end" href="http://localhost:4000#contact">Contact</a>
+      </div>
+    </div>
+  </div>
+</nav>
+        <main data-barba="container" data-barba-namespace="project">
+            <section id="header">
+    <div class="project-header container-fluid py-2 px-0">
+        <div class="fs-5 project-label-header">
+                <h3 class="project-title">
+                    Optimal Itinerary using Network Science
+                </h3>
+                April 2020
+        </div>
+        <img src="http://localhost:4000/assets/images/projects/japan.jpg" alt="" class="project-imgs">
+    </div>
+</section>
+            <div class="body-content container gx-5">
+                <p><em>This project was done alongside my <strong>MSDS 2021 Term 2</strong> SLT Elkan Joel Pagobayan.</em></p>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>When there is a plethora of selection of tourist sites, a tourists may be overwhelmed in selecting which of these tourist sites they should prioritize in visiting. These tourists might opt to look at various travel guides. However, these travel guides may have different recommendations based on ratings and rankings. Thus, it leads to further confusion to tourists that are trying to plan their trip.</p>
+
+<p>In order to help tourists decide which tourist destinations to visit, we answer the question, <b><i>“How should a tourist select destinations for their trip to maximize their travel experience?”</i></b>.</p>
+
+<h2 id="methodology">Methodology</h2>
+
+<p>In this project, we seek to solve this problem by using ratings data from Places API for Kyoto tourist spots. Here are the steps of our methodology:</p>
+
+<p>First, we obtained tourist attractions data from Wikipedia API/website and Places API. We did this using a combination of API requests and web scraping. Information such as tourist destination name, location, rating, number of users rated, and reviews were then collected. Ready to analyze data was then stored in a sql format for easy access.</p>
+
+<p>Second, we performed an initial exploratory analysis to extract insights to the data. This involves three steps:</p>
+
+<ol>
+  <li><strong>Univariate analysis</strong> - We look and characterize each feature on its own. This involves creating distribution plots and word cloud. This helps us decide how to handle missing values and outliers as well as how to expand and combine our features.</li>
+  <li><strong>Handling missing values and outliers</strong> - We look at missing values and outliers and the appropriate action to handle them. This enables us to streamline our further analysis of the data.</li>
+  <li><strong>Bivariate analysis</strong> -  We look specifically at the geographic distribution of some of the features. This allows us to observe if there are clustering observed geographically.</li>
+</ol>
+
+<p>Third, we expanded and combined some of our features based on our initial exploratory data analysis. Quantities such as <strong><em>spot satisfaction rating</em></strong>  and <strong><em>tourist decision factor</em></strong> were defined to help us quantify the utility function a tourist decision maker uses when deciding the optimal trip destinations.</p>
+
+<p>Finally, we simulated tourist decisions by maximizing their tourist decision factor to select the best destinations for a Kyoto trip itinerary.</p>
+
+<h2 id="results">Results</h2>
+
+<p>Our simulations show that there are only 16 tourist spots in which the tourist decides to go to (see Figure below). This means that regardless of where the tourist is currently at, there are only 16 possible places in which they will decide to go. Additionally, 5 places with the highest degree also have the highest Spot Satisfaction Rating (SSR).</p>
+
+<p><img src="http://localhost:4000/assets/images/projects/tourist-spots/tourist-spots.png" alt="kyoto-tourist-spots" /></p>
+
+<p>Succeedingly, we identify three types of points seen in our network: start, intermediary, and end points (see Figure below).</p>
+
+<p><img src="http://localhost:4000/assets/images/projects/tourist-spots/optimal-route.png" alt="optal-route" /></p>
+
+<p>Notice no other tourist spot points toward Toji, Sanusangen-do, Sannenzaka, Ginakaku-ji, Shimogamo Shrine, and Ryoan-ji. This means that they are the ideal starting points for the tourist. The only way for them to visit those places is if they start at them. Next, tourist spots that have the highest number of recommendations such as, Fushimi Inari-taisha, Kiyomizu-dera, Kinkaku-ji, are ideal ending points.</p>
+
+<p>Interestingly, when the tourist is at any other points, these three come up in the TDF maximization. This means at any other point, these three places will always be in the list of the tourist as next place to go. These points are therefore, “must-see” for our tourist.</p>
+
+<p>Finally, we call points that have at least 1 recommendation from other site as intermediary points. The Tenryu-ji and Iwatayama Monkey Park are an interesting intermediary points since the only way for the tourist to visit them is if they start at either of the two.</p>
+
+<h2 id="conclusion-and-recommendation">Conclusion and Recommendation</h2>
+
+<p>We have identified 16 Kyoto sites that tourists should actively consider visiting. We also found out the optimal start and end of a travel itinerary in Kyoto. We achieved this by utilizing Wikipedia and Google Places API to gather the relevant tourist data for Kyoto tourist sites. After collecting the data, we’ve identified trends and characteristics of its features. After gathering insights, we defined derived features such as the Spot Satisfaction Rating and Site Separation Distance that would allow us to formulate a tourist utility function. Then, we defined the tourist decision factor, a utility function that we used to simulate how rational tourists would decide on their next tourist destination.</p>
+
+<p>Our results help tourists maximize their travel experience in two ways: (1) Enable tourists to identify the top spots to visit; (2) Help tourists decide where to start and end their trip.</p>
+
+<p>We acknowledge that there are still limitations in this study. Some of the possible improvements that we’ve identified are the following:</p>
+
+<ol>
+  <li>Consider whether the tourist already went to the site in providing recommendations.</li>
+  <li>Consider opening and closing time of each establishment. For example, tourist spots that are closing soon will have a higher weight in the tourist decision factor.</li>
+  <li>Use actual travel distance instead of geodesic distance to have better estimate of travel time.</li>
+  <li>Simulate optimal values of tourist intrinsic factors \(A\), \(B\), \(C\), and \(n\) on a wider scope.</li>
+  <li>Incorporate wordings / sentiments found on reviews as a parameter that affects tourist decision factor.</li>
+  <li>Consider budget as a constraint in the tourist decision factor.</li>
+  <li>Optimize search results in the places API query by considering multiple places to ensure inclusion of the correct place.</li>
+  <li>Enhance the dataset by utilizing data from travel websites or applications (Tripadvisor, Lonely Planet, Trip.com).</li>
+  <li>Create an application which generates optimal itinerary for tourists. This application can have a B2B and B2C business model. B2B will focus on providing a subscription-based service to tour operators to optimize their tour itinerary and capacity planning. On the other hand, B2C will focus on generating multiple users that want to identify the best travel itinerary for them.</li>
+</ol>
+
+<p>Our hope is that further extensions of the study would help in promoting the tourism industry and provide a delightful travel experience for everybody.</p>
+
+            </div>    
+            <section id="contact">
+    <h2 class="pt-5">
+        Questions? Comments? Thoughts?
+    </h2>
+    <h1>
+        Come, Let's Talk! ->
+    </h1>
+    <div class="details-container container py-5 g-5 px-3">
+        <div class="row footer-title">
+            <div class="logo me-3"></div>
+            Leodegario Lorenzo II
+        </div>
+        <div class="row footer-details pt-3">
+            Leo is a Physics Instructor turned Landslide Researcher turned Data Scientist. His aspirations is becoming
+            a globally competitive Data Science Leader, working on high-impact projects, and hopefully finishing his PhD
+            in Data Science degree.
+        </div>
+        <div class="icons d-flex">
+            
+            <a href="mailto:llorenzo@aim.edu" target="_blank">
+                <!-- YES -->
+                <img src="http://localhost:4000/assets/icons/mail.svg" alt="mail icon">
+            </a>
+            
+            <a href="https://www.linkedin.com/in/leolorenzoii/" target="_blank">
+                <!-- YES -->
+                <img src="http://localhost:4000/assets/icons/linkedin.svg" alt="linkedin icon">
+            </a>
+            
+            <a href="https://github.com/leolorenzoii" target="_blank">
+                <!-- YES -->
+                <img src="http://localhost:4000/assets/icons/github.svg" alt="github icon">
+            </a>
+            
+            <a href="https://twitter.com/leolorenzoii" target="_blank">
+                <!-- YES -->
+                <img src="http://localhost:4000/assets/icons/twitter.svg" alt="twitter icon">
+            </a>
+            
+            <a href="https://www.instagram.com/leodegariolorenzo/" target="_blank">
+                <!-- YES -->
+                <img src="http://localhost:4000/assets/icons/instagram.svg" alt="instagram icon">
+            </a>
+            
+        </div>
+    </div>
+</section>
+            <section id="footer" class="my-3">
+    <span class="copyright">Copyright &copy; Leodegario Lorenzo II 2021</span> <br>
+    <span class="credits">Made using Jekyll</span>
+</section>
+        </main>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+<!-- barba js -->
+<script src="https://unpkg.com/@barba/core"></script>
+<script src="https://cdn.jsdelivr.net/npm/@barba/core"></script>
+
+<!-- Math AJAX -->
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+<!-- Syntax highlighter -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+
+<!-- transitions -->
+<script src="http://localhost:4000/assets/js/transitions.js"></script>
+    </body>
+</html>
