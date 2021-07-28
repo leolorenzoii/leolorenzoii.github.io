@@ -70,25 +70,285 @@
                         18 July 2021
                     </span>
                 </div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+                    <h2 id="introduction">Introduction</h2>
 
-<h2 id="heading-2">Heading 2</h2>
+<p>The core purpose of creating <strong>virtual environments</strong> is to allow <strong>isolated</strong> and <strong>controlled environments</strong> for Python projects. This enables us to reproduce an old code or use libraries whose dependencies include older versions of certain packages (<em>I’m looking at you</em> <em><strong>Tensorflow</strong>!).</em></p>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+<h3 id="challenges">Challenges</h3>
 
-<h3 id="heading-3">Heading 3</h3>
+<p>Creating a virtual environments in an enterprise setting such as in <strong>Jojie</strong> (AIM’s supercomputer) presents a challenge mainly because we may not be given <strong>administrator privileges</strong>. This inhibits us to use functions such as <code class="language-plaintext highlighter-rouge">conda create</code> or install required functionalities via <code class="language-plaintext highlighter-rouge">apt-get install</code>.</p>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+<h3 id="solution">Solution</h3>
 
-<h4 id="heading-4">Heading 4</h4>
+<p>Here we outlay a method that enables us to install a Python with version &lt; 3.8. For demonstration we install <strong><em>Python 3.6</em></strong> that enables us to install <strong><em>TensorFlow 1.14.0</em></strong> which is required by some codes such as the <a href="https://github.com/hill-a/stable-baselines">stable-baselines</a> and <a href="https://github.com/totalgood/nlpia">nlpia</a> library.</p>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+<p>The solution requires <strong>two major steps</strong>:</p>
 
-\[F = ma\]
+<ol>
+  <li>Installing from source code the desired Python version</li>
+  <li>Installing OpenSSL as a local user</li>
+</ol>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="s">"Hello World!"</span><span class="p">)</span>
+<p><strong>Step 1</strong> enables us to create an environment with an older version of Python. While <strong>Step 2</strong> enables us to perform the necessary under-the-hood operations of <code class="language-plaintext highlighter-rouge">pip</code> that requires an <em>SSL driver</em>.</p>
+
+<p>Without Step 2, we will encounter an error that looks like this when performing <code class="language-plaintext highlighter-rouge">pip install</code>:</p>
+
+<p><img src="https://leolorenzoii.github.io/assets/images/blog/virtualenv/fig0.png" alt="Creating%20virtual%20environments%20in%20Jojie%20with%20a%20diff%20e81dea39be5a4f1183438a730bdce29b/Untitled.png" /></p>
+
+<p>Thus, in this approach, we start with Step 2, since it is a prerequisite before we compile our Python version.</p>
+
+<h2 id="part-1-installing-openssl-locally">Part 1: Installing OpenSSL locally</h2>
+
+<p>For us to prevent the error shown in the previous image, we need to specify the SSL library before we install the older Python version in our system. Without admin privileges, however, we won’t be able to specify the location of SSL correctly. As such, we need to install the SSL driver locally in our system.</p>
+
+<h3 id="step-1-download-the-openssl-installer">Step 1: Download the OpenSSL installer</h3>
+
+<p>Go to the <a href="https://www.openssl.org/source/">OpenSSL</a> source website then download the latest stable version. Upon writing it is the <a href="https://www.openssl.org/source/openssl-1.1.1k.tar.gz">openssl-1.1.1k</a> version.</p>
+
+<p><img src="https://leolorenzoii.github.io/assets/images/blog/virtualenv/fig1.png" alt="Creating%20virtual%20environments%20in%20Jojie%20with%20a%20diff%20e81dea39be5a4f1183438a730bdce29b/Untitled%201.png" /></p>
+
+<p>We can do this directly by using the <code class="language-plaintext highlighter-rouge">wget</code> function in the terminal</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://www.openssl.org/source/openssl-1.1.1k.tar.gz <span class="nt">--no-check-certificate</span>
 </code></pre></div></div>
 
+<p>Afterwards we unzip the downloaded source code using <code class="language-plaintext highlighter-rouge">tar</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tar</span> <span class="nt">-zxvf</span> openssl-1.1.1k.tar.gz
+</code></pre></div></div>
+
+<h3 id="step-2-install-openssl-locally">Step 2: Install OpenSSL locally</h3>
+
+<p>Now that we have the source files, the next step is to install it to our system <em>locally</em>. To do this, first we go inside the source directory of OpenSSL</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>openssl-1.1.1k/
+</code></pre></div></div>
+
+<p>Afterwards we perform these commands to initialize our installation of OpenSSL.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> ~/.localssl
+./config <span class="nt">--prefix</span><span class="o">=</span><span class="nv">$HOME</span>/.localssl <span class="nt">--openssldir</span><span class="o">=</span><span class="nv">$HOME</span>/.localssl no-ssl2
+make
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">prefix</code> and <code class="language-plaintext highlighter-rouge">openssldir</code> are the crucial components to make sure that the source code is installed locally on our machines.</p>
+
+<p><em><strong>Note:</strong> You can opt to install the OpenSSL in any directory besides <code class="language-plaintext highlighter-rouge">.localssl</code> as long as you are consistent throughout the process</em></p>
+
+<p>Afterwards, perform testing to make sure that everything works correctly</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make <span class="nb">test</span>
+</code></pre></div></div>
+
+<p>Finally, we perform the installation using the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make <span class="nb">install</span>
+</code></pre></div></div>
+
+<h3 id="step-3-configure-the-local-environment-variables">Step 3: Configure the local environment variables</h3>
+
+<p>The final step in making sure that OpenSSL works under our username is to configure the relevant environment variables.</p>
+
+<p>First, we need to find where is our bash_profile shell is.</p>
+
+<p>Typically it is located in the home directory of the user with names like <code class="language-plaintext highlighter-rouge">.bash_profile</code> or <code class="language-plaintext highlighter-rouge">.profile</code> . Check in your system specifically what this is by executing the command</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> ~
+<span class="nb">ls</span> <span class="nt">-a</span>
+</code></pre></div></div>
+
+<p>In my case it was this <code class="language-plaintext highlighter-rouge">.profile</code> file.</p>
+
+<p><img src="https://leolorenzoii.github.io/assets/images/blog/virtualenv/fig2.png" alt="Creating%20virtual%20environments%20in%20Jojie%20with%20a%20diff%20e81dea39be5a4f1183438a730bdce29b/Untitled%202.png" /></p>
+
+<p>Which when we read in <code class="language-plaintext highlighter-rouge">vim</code>,</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim .profile
+</code></pre></div></div>
+
+<p>Looks something like this:</p>
+
+<p><img src="https://leolorenzoii.github.io/assets/images/blog/virtualenv/fig3.png" alt="Creating%20virtual%20environments%20in%20Jojie%20with%20a%20diff%20e81dea39be5a4f1183438a730bdce29b/Untitled%203.png" /></p>
+
+<p>To configure the local variables for OpenSSL, append at the end of this file the following commands:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$HOME</span>/.localssl/bin:<span class="nv">$PATH</span>
+<span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$HOME</span>/.localssl/lib
+<span class="nb">export </span><span class="nv">LC_ALL</span><span class="o">=</span><span class="s2">"en_US.UTF-8"</span>
+<span class="nb">export </span><span class="nv">LDFLAGS</span><span class="o">=</span><span class="s2">"-L/home/&lt;username&gt;/.localssl/lib -Wl,-rpath,/home/&lt;username&gt;/.localssl/lib"</span>
+</code></pre></div></div>
+
+<p>Don’t forget to change the <code class="language-plaintext highlighter-rouge">&lt;username&gt;</code> to the user name you use in the machine.</p>
+
+<p>Afterwards, <code class="language-plaintext highlighter-rouge">source</code> the <code class="language-plaintext highlighter-rouge">.profile</code> via the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">.</span> ~/.profile
+</code></pre></div></div>
+
+<h3 id="step-4-check-that-openssl-was-installed-properly">Step 4: Check that OpenSSL was installed properly</h3>
+
+<p>Afterwards, we can check if <code class="language-plaintext highlighter-rouge">openssl</code> was installed properly by executing the command below:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>which openssl
+</code></pre></div></div>
+
+<p>The output of the above should be your local directory such as: <code class="language-plaintext highlighter-rouge">/home/&lt;username&gt;/.localssl/bin/openssl</code>.</p>
+
+<p>We can also inspect the version of <code class="language-plaintext highlighter-rouge">openssl</code> via the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openssl version
+</code></pre></div></div>
+
+<p>This should output the <code class="language-plaintext highlighter-rouge">OpenSSL</code> version as well as its date.</p>
+
+<p><em><strong>Note:</strong> Take note of your <code class="language-plaintext highlighter-rouge">OpenSSL</code> directory, i.e. <code class="language-plaintext highlighter-rouge">/home/&lt;username&gt;/.localssl</code> as we will use this during the configuration of the Python installation.</em></p>
+
+<h2 id="part-2-installing-python-with-ssl-support">Part 2: Installing Python with SSL Support</h2>
+
+<p>Now that our <code class="language-plaintext highlighter-rouge">OpenSSL</code> driver has been installed under our username, the next step is to use this setting during our Python installation.</p>
+
+<p>In this walkthrough, we show how to install <a href="https://www.python.org/downloads/release/python-360/">Python version 3.6.0</a> from the source code with SSL support in non-standard location.</p>
+
+<h3 id="step-1-download-the-python-installer">Step 1: Download the Python installer</h3>
+
+<p>First, we download the source code directly via <code class="language-plaintext highlighter-rouge">wget</code> as shown by the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://www.python.org/ftp/python/3.6.0/Python-3.6.0.tgz <span class="nt">--no-check-certificate</span>
+</code></pre></div></div>
+
+<p>Then we unzip the source file using <code class="language-plaintext highlighter-rouge">tar</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tar</span> <span class="nt">-xzvf</span> Python-3.6.0.tgz
+</code></pre></div></div>
+
+<p>These unzipped files contain the source code for installing Python.</p>
+
+<h3 id="step-2-set-openssl-support">Step 2: Set OpenSSL support</h3>
+
+<p>Before we can compile the source code into our local directory, we have to first make sure that the SSL setting uses the one we installed locally on our machine.</p>
+
+<p>To do this, we need to change few lines in the <code class="language-plaintext highlighter-rouge">Python-3.6.0/Modules/Setup.dist</code> file inside the source code.</p>
+
+<p>We can edit this file using any text editor. In our case we use <code class="language-plaintext highlighter-rouge">vim</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim Python-3.6.0/Modules/Setup.dist
+</code></pre></div></div>
+
+<p>Look and uncomment lines <code class="language-plaintext highlighter-rouge">209</code> to <code class="language-plaintext highlighter-rouge">212</code> as shown below:</p>
+
+<p><img src="https://leolorenzoii.github.io/assets/images/blog/virtualenv/fig4.png" alt="Creating%20virtual%20environments%20in%20Jojie%20with%20a%20diff%20e81dea39be5a4f1183438a730bdce29b/Untitled%204.png" /></p>
+
+<p>Remember to change the <code class="language-plaintext highlighter-rouge">&lt;username&gt;</code> or the directory to the directory wherein you installed <code class="language-plaintext highlighter-rouge">OpenSSL</code> from <strong>Part 1</strong>.</p>
+
+<p>Afterwards, we are now ready to <strong>install Python with SSL support</strong>.</p>
+
+<h3 id="step-3-install-python">Step 3: Install Python</h3>
+
+<p>To perform the installation, execute the following commands in the terminal.</p>
+
+<p>First, we make sure that we are inside the directory of the source code:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>Python-3.6.0
+</code></pre></div></div>
+
+<p>Then, configure for Python to be installed in your local directory. In this walkthrough, we install it in the <code class="language-plaintext highlighter-rouge">~/.localpython</code> directory:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> ~/.localpython
+./configure <span class="nt">--prefix</span><span class="o">=</span><span class="nv">$HOME</span>/.localpython
+</code></pre></div></div>
+
+<p>Then, execute the installation by performing <code class="language-plaintext highlighter-rouge">make</code> commands</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make
+make <span class="nb">install</span>
+</code></pre></div></div>
+
+<p>After finishing the process above, you now have a locally installed <code class="language-plaintext highlighter-rouge">Python-3.6.0</code> version.</p>
+
+<p><strong><em>We can now create an environment using Python 3.6.0!</em></strong></p>
+
+<h2 id="part-3-using-virtualenv-to-create-virtual-environments">Part 3: Using <code class="language-plaintext highlighter-rouge">virtualenv</code> to Create Virtual Environments</h2>
+
+<p>By this time, we should now have a <strong>Python version 3.6.0</strong> installed in our local directory with SSL support! We can therefore create virtual environments using this installed Python version.</p>
+
+<p>In this last part of the walkthrough, we outline the steps we need to make to create Python virtual environments using <code class="language-plaintext highlighter-rouge">virtualenv</code>.</p>
+
+<p>We also take note of the possible errors that we may encounter in the invoked environment.</p>
+
+<h3 id="step-1-create-a-virtual-environment-with-a-specific-python-version">Step 1: Create a virtual environment with a specific Python version</h3>
+
+<p>Since we want to create a virtual environment with a specific version of Python, we need to specify this during our creation with <code class="language-plaintext highlighter-rouge">virtualenv</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>virtualenv <span class="nt">-p</span><span class="o">=</span><span class="nv">$HOME</span>/.localpython/bin/python3.6 &lt;env_name&gt;
+</code></pre></div></div>
+
+<p>Here, set <code class="language-plaintext highlighter-rouge">&lt;env_name&gt;</code> as your desired environment name.</p>
+
+<p>Afterwards, we can activate our environment by sourcing the <code class="language-plaintext highlighter-rouge">activate</code> command found in <code class="language-plaintext highlighter-rouge">&lt;env_name&gt;/bin/activate</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> &lt;env_name&gt;/bin/activate
+</code></pre></div></div>
+
+<p>We know that our virtual environment has been activated if in the console, our terminal label is prefixed by the <code class="language-plaintext highlighter-rouge">&lt;env_name&gt;</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>&lt;env-name&gt;<span class="o">)</span> &lt;username&gt;@jupyter-&lt;username&gt;:~<span class="err">$</span>
+</code></pre></div></div>
+
+<h3 id="step-2-install-libraries">Step 2: Install libraries</h3>
+
+<p>Now that our environment has been activated we can install our desired libraries accordingly using <code class="language-plaintext highlighter-rouge">pip</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span><span class="nv">tensorflow</span><span class="o">==</span>1.14.0 stable-baselines
+</code></pre></div></div>
+
+<h3 id="step-3-install-environment-as-kernel">Step 3: Install environment as kernel</h3>
+
+<p>Finally, for us to be able to access the environment in jupyter hub, we need to create a kernel using our created environment.</p>
+
+<p>First, we need to install prerequisites</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>ipykernel contextvars <span class="nt">--upgrade</span> prompt-toolkit<span class="o">==</span>2.0.1
+</code></pre></div></div>
+
+<p>It is important that <code class="language-plaintext highlighter-rouge">prompt-toolkit</code> be downgraded since it is not compatible with Python 3.6.</p>
+
+<p>After the installation, we can create a kernel using the desired <code class="language-plaintext highlighter-rouge">&lt;kernel_name&gt;</code> via the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python <span class="nt">-m</span> ipykernel <span class="nb">install</span> <span class="nt">--name</span> &lt;kernel_name&gt; <span class="nt">--user</span>
+</code></pre></div></div>
+
+<p><strong>Congratulations!!</strong> 🎉🎉🎉 <em>**</em>Now you have installed an older Python version with specific packages.</p>
+
+<h3 id="bonus-step-pandas-dependency">Bonus step: <code class="language-plaintext highlighter-rouge">pandas</code> dependency</h3>
+
+<p>As a final note, you may encounter an error when you import <code class="language-plaintext highlighter-rouge">pandas</code>:</p>
+
+<p><img src="https://leolorenzoii.github.io/assets/images/blog/virtualenv/fig5.png" alt="Creating%20virtual%20environments%20in%20Jojie%20with%20a%20diff%20e81dea39be5a4f1183438a730bdce29b/Untitled%205.png" /></p>
+
+<p>To resolve this, we need to downgrade pandas to version <code class="language-plaintext highlighter-rouge">0.24.0</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span><span class="nv">pandas</span><span class="o">==</span>0.24.0
+</code></pre></div></div>
+
+<p>After this, importing <code class="language-plaintext highlighter-rouge">pandas</code> should no longer throw off an error.</p>
+
+<h2 id="final-notes">Final Notes</h2>
+
+<p>That’s it, friends! 🎉🎉🎉</p>
+
+<p>I hope that the above procedure works for your case.</p>
+
+<p>It is also important that we emphasize that there maybe a machine to machine subtleties that may not be covered.</p>
+
+<p>If you need further help, you may contact me through mail at <a href="mailto:llorenzo@aim.edu">llorenzo@aim.edu</a></p>
+
+<h2 id="references">References</h2>
+
+<p><a href="https://help.dreamhost.com/hc/en-us/articles/360001435926-Installing-OpenSSL-locally-under-your-username">Installing OpenSSL locally under your username</a></p>
+
+<p><a href="https://stackoverflow.com/questions/5937337/building-python-with-ssl-support-in-non-standard-location">Building Python with SSL support in non-standard location</a></p>
+
+<p><a href="https://stackoverflow.com/questions/1534210/use-different-python-version-with-virtualenv">Use different Python version with virtualenv</a></p>
 
             </div>
             <section id="contact">
@@ -152,9 +412,6 @@
 <!-- barba js -->
 <script src="https://unpkg.com/@barba/core"></script>
 <script src="https://cdn.jsdelivr.net/npm/@barba/core"></script>
-
-<!-- intro -->
-<script src="https://leolorenzoii.github.io/assets/js/home.js"></script>
 
 <!-- Syntax highlighter -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
